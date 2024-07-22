@@ -426,7 +426,7 @@ function uploadDbfsFile(databricksHost, databricksToken, localPath, dbfsDir) {
             throw new Error(`Got invalid dbfs-dir input "${dbfsDir}". dbfs-dir input must start with "dbfs:/"`);
         }
         const dbfsUploadDirectory = getDbfsUploadDirectory(dbfsDir);
-        const dbfsPath = `${dbfsUploadDirectory}/${path.basename(localPath)}`;
+        const dbfsPath = `${dbfsUploadDirectory}${path.basename(localPath)}`;
         const apiClient = new api_client_1.ApiClient(databricksHost, databricksToken);
         yield apiClient.dbfsUpload(localPath, dbfsPath);
         return { dbfsUploadDirectory, dbfsUploadPath: dbfsPath };

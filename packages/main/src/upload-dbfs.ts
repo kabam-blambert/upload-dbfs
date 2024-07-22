@@ -18,7 +18,7 @@ export async function uploadDbfsFile(
     )
   }
   const dbfsUploadDirectory = getDbfsUploadDirectory(dbfsDir)
-  const dbfsPath = `${dbfsUploadDirectory}/${path.basename(localPath)}`
+  const dbfsPath = `${dbfsUploadDirectory}${path.basename(localPath)}`
   const apiClient = new ApiClient(databricksHost, databricksToken)
   await apiClient.dbfsUpload(localPath, dbfsPath)
   return {dbfsUploadDirectory, dbfsUploadPath: dbfsPath}

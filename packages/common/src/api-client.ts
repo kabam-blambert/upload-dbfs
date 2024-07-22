@@ -37,7 +37,7 @@ export class ApiClient {
 
   private async dbfsCreateHandle(dbfsPath: string): Promise<number> {
     const {handle} = (await this.request('/api/2.0/dbfs/create', 'POST', {
-      path: dbfsPath
+      path: dbfsPath, overwrite: true
     })) as {handle: number}
     return handle
   }

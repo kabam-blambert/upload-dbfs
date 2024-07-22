@@ -70,7 +70,7 @@ class ApiClient {
     dbfsCreateHandle(dbfsPath) {
         return __awaiter(this, void 0, void 0, function* () {
             const { handle } = (yield this.request('/api/2.0/dbfs/create', 'POST', {
-                path: dbfsPath
+                path: dbfsPath, overwrite: true
             }));
             return handle;
         });

@@ -1,4 +1,4 @@
-import {uploadDbfsTempfile} from '../packages/main/src/upload-dbfs-tempfile'
+import {uploadDbfsFile} from '../packages/main/src/upload-dbfs'
 import {
   DATABRICKS_HOST,
   TOKEN,
@@ -40,12 +40,12 @@ jest.mock('crypto', () => {
 })
 const mockUuid = 'MOCK_UUID_FOR_TESTS'
 
-describe('upload-dbfs-tempfile integration tests', () => {
+describe('upload-dbfs integration tests', () => {
   const handle = 12345
 
   let perTestTmpDir: string
   beforeEach(() => {
-    perTestTmpDir = fs.mkdtempSync('upload-dbfs-tempfile-tests')
+    perTestTmpDir = fs.mkdtempSync('upload-dbfs-tests')
   })
 
   afterEach(() => {
@@ -57,25 +57,25 @@ describe('upload-dbfs-tempfile integration tests', () => {
       dbfsTempDir: 'dbfs:/databricks-github-actions',
       filePath: '__tests__/resources/python-egg.egg',
       expectedAddBlocks: ['cHJpbnQoIkhlbGxvIHdvcmxkIikK'],
-      expectedDbfsUploadPath: `dbfs:/databricks-github-actions/${mockUuid}/python-egg.egg`
+      expectedDbfsUploadPath: `dbfs:/databricks-github-actions/python-egg.egg`
     },
     {
       dbfsTempDir: 'dbfs:/databricks-github-actions/',
       filePath: '__tests__/resources/python-wheel.whl',
       expectedAddBlocks: ['cHJpbnQoIkhlbGxvIHdvcmxkIikK'],
-      expectedDbfsUploadPath: `dbfs:/databricks-github-actions/${mockUuid}/python-wheel.whl`
+      expectedDbfsUploadPath: `dbfs:/databricks-github-actions/python-wheel.whl`
     },
     {
       dbfsTempDir: 'dbfs:/databricks-github-actions/',
       filePath: '__tests__/resources/scala-jar.jar',
       expectedAddBlocks: ['cHJpbnRsbigiSGVsbG8gd29ybGQiKQo='],
-      expectedDbfsUploadPath: `dbfs:/databricks-github-actions/${mockUuid}/scala-jar.jar`
+      expectedDbfsUploadPath: `dbfs:/databricks-github-actions/scala-jar.jar`
     },
     {
       dbfsTempDir: 'dbfs:/databricks-github-actions/',
       filePath: '__tests__/resources/data-file.csv',
       expectedAddBlocks: ['bmFtZSxhZ2UKRnJhbmssMzAK'],
-      expectedDbfsUploadPath: `dbfs:/databricks-github-actions/${mockUuid}/data-file.csv`
+      expectedDbfsUploadPath: `dbfs:/databricks-github-actions/data-file.csv`
     },
     {
       dbfsTempDir: 'dbfs:/databricks-github-actions/',
@@ -83,7 +83,7 @@ describe('upload-dbfs-tempfile integration tests', () => {
       expectedAddBlocks: [
         'UEsDBBQAAAAIAPqxjFQy8tbEPgAAAEwAAAAWAAAAaGVsbG93b3JsZC9fX2luaXRfXy5weUvOSSwuVvBIzcnJ18hPykpNLtG04lIAgpTUNIXixMr4DLBUcWpOGlQCBIpSS0qL8hSUwPp0FMLzi3JSFJUAUEsDBBQAAAAIADy2jFT6M/QpogAAANAAAAAhAAAAaGVsbG93b3JsZC0wLjEuZGlzdC1pbmZvL01FVEFEQVRBRY7LDoIwFET39yv6A4CPuGmiCTsSBYlGWV/hSpu0FNuShr+3mKjbOTMnU5LHDj0md7JOmoGzTbqGCjVxJkgpE4xVHfzoKtLrpDXambNiKbBmaTBPzsuhZ0EoKIymZMR+cXg/8iwLIaQfXdoaDfnkhbGclUagxo7lFh8STrKlwcXNrTpW56aCWqF/Gqv/yYVek7TkknqOhnjnsN+mO4AvB3gDUEsDBBQAAAAIADy2jFSr+sidXwAAAG4AAAAeAAAAaGVsbG93b3JsZC0wLjEuZGlzdC1pbmZvL1dIRUVMC89ITc3RDUstKs7Mz7NSMNQz4HJPzUstSizJL7JSSErJLC6JLwepUdAw0DM20zPS5ArKzy/R9SzWDSgtSs3JTLJSKCkqTeUKSUy3UiioNNLNy89L1U3Mq4SJGCNEuABQSwMEFAAAAAgAPLaMVOYySZoNAAAACwAAACYAAABoZWxsb3dvcmxkLTAuMS5kaXN0LWluZm8vdG9wX2xldmVsLnR4dMtIzcnJL88vyknhAgBQSwMEFAAAAAgAPLaMVMfl3Rr+AAAAewEAAB8AAABoZWxsb3dvcmxkLTAuMS5kaXN0LWluZm8vUkVDT1JEdcw5doJAAADQ3rMAssiSwgIYQEVQBFRo5kV2nQyoLAOnTxrS+Q/wywyheqhfKF1CWOGqhZBpRupdfvOitO6lPcnNsFCxhV0dvWhHqM/nCAlSrApd7jxuYAThMzPCLSVLi/I/o1mGY9Lq3dIVzuulYwQqUAN1fgvbGbayRiyIOcRPPrLNkO+TCJiJWl4LdPy6iaSbfHJZUTyrfI4vG8PYz2tM4zFqhlfiP0medkR0bhgCT+TF6ijveGAJu8LqD9EYeBTHsZ/Xtm4gyvoMMS1p5/3uavCAoHgfm9WkuD9DQJMt3bl2srFdJUuVWNOv5y7zHuzf/jk/GfrhBChq8QtQSwECFAMUAAAACAD6sYxUMvLWxD4AAABMAAAAFgAAAAAAAAAAAAAApIEAAAAAaGVsbG93b3JsZC9fX2luaXRfXy5weVBLAQIUAxQAAAAIADy2jFT6M/QpogAAANAAAAAhAAAAAAAAAAAAAACkgXIAAABoZWxsb3dvcmxkLTAuMS5kaXN0LWluZm8vTUVUQURBVEFQSwECFAMUAAAACAA8toxUq/rInV8AAABuAAAAHgAAAAAAAAAAAAAApIFTAQAAaGVsbG93b3JsZC0wLjEuZGlzdC1pbmZvL1dIRUVMUEsBAhQDFAAAAAgAPLaMVOYySZoNAAAACwAAACYAAAAAAAAAAAAAAKSB7gEAAGhlbGxvd29ybGQtMC4xLmRpc3QtaW5mby90b3BfbGV2ZWwudHh0UEsBAhQDFAAAAAgAPLaMVMfl3Rr+AAAAewEAAB8AAAAAAAAAAAAAALQBPwIAAGhlbGxvd29ybGQtMC4xLmRpc3QtaW5mby9SRUNPUkRQSwUGAAAAAAUABQCAAQAAegMAAAAA'
       ],
-      expectedDbfsUploadPath: `dbfs:/databricks-github-actions/${mockUuid}/helloworld-0.1-py2.py3-none-any.whl`
+      expectedDbfsUploadPath: `dbfs:/databricks-github-actions/helloworld-0.1-py2.py3-none-any.whl`
     }
   ])(
     'create temporary directory and upload notebook (file path = $filePath, dbfsTempDir =' +
@@ -125,7 +125,7 @@ describe('upload-dbfs-tempfile integration tests', () => {
   )
 
   test('upload-dbfs-tempfile: handles API failures and closes handle', async () => {
-    const expectedDbfsUploadPath = `dbfs:/tmp/databricks-actions/${mockUuid}/python-egg.egg`
+    const expectedDbfsUploadPath = `dbfs:/tmp/databricks-actions/python-egg.egg`
     const localPath = '__tests__/resources/python-egg.egg'
     setupExpectedApiCalls([
       mockApiRequest(
@@ -165,7 +165,7 @@ describe('upload-dbfs-tempfile integration tests', () => {
     const tmpFile = path.join(perTestTmpDir, 'python-egg.egg')
     fs.writeFileSync(tmpFile, contents)
     const dbfsTempDir = 'dbfs:/databricks-github-actions'
-    const expectedDbfsUploadPath = `dbfs:/databricks-github-actions/${mockUuid}/python-egg.egg`
+    const expectedDbfsUploadPath = `dbfs:/databricks-github-actions/python-egg.egg`
     const expectedAddBlocks = [
       new Buffer(contents.slice(0, DBFS_UPLOAD_MAX_BYTES_PER_BLOCK)).toString(
         'base64'
@@ -240,7 +240,7 @@ describe('upload-dbfs-tempfile integration tests', () => {
   const dbfsTempDir = 'dbfs:/databricks-github-actions/'
   const filePath = '__tests__/resources/scala-jar.jar'
   const expectedAddBlocks = ['cHJpbnRsbigiSGVsbG8gd29ybGQiKQo=']
-  const expectedDbfsUploadDir = `dbfs:/databricks-github-actions/${mockUuid}`
+  const expectedDbfsUploadDir = `dbfs:/databricks-github-actions`
   const expectedDbfsUploadPath = `${expectedDbfsUploadDir}/scala-jar.jar`
   const handle = 123
 

@@ -1,5 +1,5 @@
 import * as core from '@actions/core'
-import {uploadDbfsTempfile} from './upload-dbfs-tempfile'
+import {uploadDbfsFile} from './upload-dbfs'
 import {
   DATABRICKS_DBFS_DESTINATION_PATH_OUTPUT_KEY,
   DBFS_TMP_DIR_STATE_KEY
@@ -11,7 +11,7 @@ async function runMainHelper(): Promise<void> {
   const databricksToken: string = util.getDatabricksToken()
   const localPath: string = util.getLocalPathInput()
   const dbfsTmpDir: string = util.getDbfsTempDir()
-  const {dbfsUploadDirectory, dbfsUploadPath} = await uploadDbfsTempfile(
+  const {dbfsUploadDirectory, dbfsUploadPath} = await uploadDbfsFile(
     databricksHost,
     databricksToken,
     localPath,

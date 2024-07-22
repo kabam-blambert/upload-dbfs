@@ -1,24 +1,23 @@
 import * as path from 'path'
-import {randomUUID} from 'crypto'
 import {ApiClient} from '../../common/src/api-client'
 
 const getDbfsUploadDirectory = (dbfsTmpDir: string): string => {
   const baseDir = dbfsTmpDir.endsWith('/') ? dbfsTmpDir : `${dbfsTmpDir}/`
-  return `${baseDir}${randomUUID()}`
+  return baseDir
 }
 
-export async function uploadDbfsTempfile(
+export async function uploadDbfsFile(
   databricksHost: string,
   databricksToken: string,
   localPath: string,
-  dbfsTmpDir: string
+  dbfsDir: string
 ): Promise<{dbfsUploadDirectory: string; dbfsUploadPath: string}> {
-  if (!dbfsTmpDir.startsWith('dbfs:/')) {
+  if (!dbfsDir.startsWith('dbfs:/')) {
     throw new Error(
-      `Got invalid dbfs-temp-dir input "${dbfsTmpDir}". dbfs-temp-dir input must start with "dbfs:/"`
+      `Got invalid dbfs-dir input "${dbfsDir}". dbfs-dir input must start with "dbfs:/"`
     )
   }
-  const dbfsUploadDirectory = getDbfsUploadDirectory(dbfsTmpDir)
+  const dbfsUploadDirectory = getDbfsUploadDirectory(dbfsDir)
   const dbfsPath = `${dbfsUploadDirectory}/${path.basename(localPath)}`
   const apiClient = new ApiClient(databricksHost, databricksToken)
   await apiClient.dbfsUpload(localPath, dbfsPath)

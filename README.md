@@ -1,4 +1,6 @@
-# upload-dbfs-temp v0
+# upload-dbfs v0
+
+# I don't know anything about TypeScript so be careful.
 
 # Overview
 Given a file on the local filesystem, this Action uploads the file to a temporary path in 

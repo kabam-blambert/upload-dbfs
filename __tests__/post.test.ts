@@ -34,10 +34,10 @@ describe('post-step unit tests', () => {
   const mockUuid = 'MOCK_UUID_FOR_TESTS'
   test.each([
     {
-      dbfsTempDir: `dbfs:/databricks-github-actions/${mockUuid}`
+      dbfsTempDir: `dbfs:/databricks-github-actions/`
     },
     {
-      dbfsTempDir: `dbfs:/databricks-github-actions/${mockUuid}/`
+      dbfsTempDir: `dbfs:/databricks-github-actions/`
     }
   ])(
     'delete-dbfs-tmpdir: successful deletion of temporary DBFS directory',
@@ -58,12 +58,12 @@ describe('post-step unit tests', () => {
   )
 
   test('deleteDbfsTmpdir: handles API failures', async () => {
-    const tmpNotebookDirectory = `dbfs:/databricks-github-actions/${mockUuid}`
+    const tmpNotebookDirectory = `dbfs:/databricks-github-actions/`
     setupExpectedApiCalls([
       mockApiRequest(
         '/api/2.0/dbfs/delete',
         'POST',
-        {path: `dbfs:/databricks-github-actions/${mockUuid}`, recursive: true},
+        {path: `dbfs:/databricks-github-actions/`, recursive: true},
         400,
         {}
       )
